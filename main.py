@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication,
                              QWidget, QPushButton, QTextEdit,
                              QLabel, QLineEdit, QListWidget,
-                             QVBoxLayout, QHBoxLayout)
+                             QVBoxLayout, QHBoxLayout, QInputDialog)
 import json
 app = QApplication([])
 
@@ -77,7 +77,56 @@ def show_note():
     field_text.setText(notes[key]['текст'])
     list_tags.clear()
     list_tags.addItems(notes[key]['теги'])
+def add_note():
+    note_name, ok = QInputDialog.getText(notes_win,"Додати замітку","Назва замітки")
+    if ok and note_name!='':
+        notes[note_name]={'текст': '','теги':[]}
+        list_notes.addItem(note_name)
+        list_tags.addItems(notes[note_name]['теги'])
+        print(notes)
+def save_note():
+    if list_notes.selectedItems():
+        key=list_notes.selectedItems()[0].text()
+        notes[key]['текст']=field_text.toPlainText()
+        with open ('f.json','w') as file:
+            json.dump(notes,file,sort_keys=True)
+        print(notes)
+    else:
+        print("Замітка для збереження не вибрана!")
 
+def del_note():
+    if list_notes.selectedItems():
+        key = list_notes.selectedItems()[0].text()
+        del notes[key]
+        list_tags.clear()
+        list_notes.clear()
+        field_text.clear()
+        list_notes.addItems(notes)
+        with open('f.json', 'w') as file:
+            json.dump(notes, file, sort_keys=True)
+        print(notes)
+    else:
+        print("Замітка для видалення не вибрана!")
+
+
+def add_tag():
+    if list_notes.selectedItems():
+        key = list_notes.selectedItems()[0].text()
+        tag = field_tag.text()
+        if not tag in notes[key]['теги']:
+            notes[key]['теги'].append(tag)
+            list_tags.addItem(tag)
+            field_tag.clear()
+        with open('f.json', 'w') as file:
+            json.dump(notes, file, sort_keys=True)
+        print(notes)
+    else:
+        print('Замітка для додавання теги не обрана')
+
+btn_note_create.clicked.connect(add_note)
+btn_note_save.clicked.connect(save_note)
+btn_note_delete.clicked.connect(del_note)
+btn_tag_add.clicked.connect(add_tag)
 
 list_notes.itemClicked.connect(show_note)
 list_notes.addItems(notes)
