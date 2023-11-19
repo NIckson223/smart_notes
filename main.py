@@ -123,10 +123,46 @@ def add_tag():
     else:
         print('Замітка для додавання теги не обрана')
 
+def del_tag():
+    if list_notes.selectedItems():
+        key = list_notes.selectedItems()[0].text()
+        tag =list_tags.selectedItems()[0].text()
+        notes[key]['теги'].remove(tag)
+        with open('f.json', 'w') as file:
+            json.dump(notes, file, sort_keys=True)
+    else:
+        print('Такий тег не знайдено')
+
+
+def search_tag():
+    tag = field_tag.text()
+    if btn_tag_search.text()=="Шукати замітки по тегу":
+        notes_filtered={}
+        for note in notes:
+            if tag in notes[note]['теги']:
+                notes_filtered[note] = notes[note]
+        btn_tag_search.setText('Скинути пошук')
+        list_notes.clear()
+        list_tags.clear()
+        list_notes.addItems(notes_filtered)
+    elif btn_tag_search.text()=='Скинути пошук':
+        list_tags.clear()
+        list_notes.clear()
+        field_tag.clear()
+        list_notes.addItems(notes)
+        btn_tag_search.setText("Шукати замітки по тегу")
+    else:
+        pass
+
+    print(notes_filtered)
+
+
 btn_note_create.clicked.connect(add_note)
 btn_note_save.clicked.connect(save_note)
 btn_note_delete.clicked.connect(del_note)
 btn_tag_add.clicked.connect(add_tag)
+btn_tag_deleted.clicked.connect(del_tag)
+btn_tag_search.clicked.connect(search_tag)
 
 list_notes.itemClicked.connect(show_note)
 list_notes.addItems(notes)
