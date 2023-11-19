@@ -161,7 +161,7 @@ btn_note_create.clicked.connect(add_note)
 btn_note_save.clicked.connect(save_note)
 btn_note_delete.clicked.connect(del_note)
 btn_tag_add.clicked.connect(add_tag)
-btn_tag_deleted.clicked.connect(del_tag)
+btn_tag_deletedsclicked.connect(del_tag)
 btn_tag_search.clicked.connect(search_tag)
 
 list_notes.itemClicked.connect(show_note)
